@@ -1,0 +1,20 @@
+wc=0.5*pi;
+ N=7;
+ alpha=(N-1)/2;
+ eps=0.001;
+ n=0.1:N-1
+ hd=(sin(wc*(n-alpha+eps)) )/(pi*(n-alpha+eps))
+ wh=hamming(N);
+ hn=wh.'*hd;
+ w=0:0.01:pi;
+ h=freqz(hn,1,w)
+ plot(w/pi,abs(h))
+ title('Hamming window')
+ xlabel('W');
+ ylabel('|H.ejw|');
+ N=30;
+fs=8000;
+ fc=2000;
+ wc=fc/(fs/2);
+ h=fir1(N,wc,"high",hamming(N+1));
+ freqz(h,1,1024,fs)
