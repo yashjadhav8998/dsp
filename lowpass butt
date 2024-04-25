@@ -1,0 +1,34 @@
+% Define specifications
+Ap = 0.6;
+As = 0.1;
+wp = 0.35 * pi;
+ws = 0.7 * pi;
+T = 0.1;
+
+% Convert ripple levels to decibels
+rp = -20*log10(Ap);
+rs = -20*log10(As);
+
+% Convert digital frequencies to analog frequencies
+ohmp = (2/T)*tan(wp/2);
+ohms = (2/T)*tan(ws/2);
+
+% Determine order and cutoff frequency of analog Butterworth filter
+[N, CF] = buttord(ohmp, ohms, rp, rs, 's');
+
+% Design analog Butterworth filter
+[B, A] = butter(N, 1, 's');
+
+% Convert analog filter to digital using bilinear transformation
+[B1, A1] = butter(N, CF, 'low', 's');
+[num, den] = bilinear(B1, A1, 1/T);
+
+% Compute magnitude response of the filter
+w = 0:pi/16:pi;
+[h, ~] = freqz(num, den, w);
+
+% Plot magnitude response
+plot(w/pi, abs(h));
+title('Low-pass Butterworth Filter Magnitude Response');
+xlabel('Normalized Frequency (\times\pi rad/sample)');
+ylabel('|H(\omega)|');
